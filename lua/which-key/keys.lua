@@ -127,11 +127,14 @@ function M.get_mappings(mode, prefix, buf)
         value.label = value.label or "+prefix"
         value.label = value.label:gsub("^%+", "")
         value.label = Config.options.icons.group .. value.label
+      elseif not value.group and value.label then
+        value.label = Config.options.icons.label .. value.label
       elseif not value.label then
-        value.label = value.cmd or ""
+        value.label = value.desc or value.cmd or ""
         for _, v in ipairs(Config.options.hidden) do
           value.label = value.label:gsub(v, "")
         end
+        value.label = Config.options.icons.label .. value.label
       end
       if value.value then
         value.value = vim.fn.strtrans(value.value)
@@ -165,8 +168,9 @@ end
 
 ---@param mappings Mapping[]
 ---@return Mapping[]
-function M.parse_mappings(mappings, value, prefix)
+function M.parse_mappings(mappings, value, prefix, group_name)
   prefix = prefix or ""
+  group_name = group_name or ""
   if type(value) == "string" then
     table.insert(mappings, { prefix = prefix, label = value })
   elseif type(value) == "table" then
@@ -174,7 +178,7 @@ function M.parse_mappings(mappings, value, prefix)
       -- key group
       for k, v in pairs(value) do
         if k ~= "name" then
-          M.parse_mappings(mappings, v, prefix .. k)
+          M.parse_mappings(mappings, v, prefix .. k, value.name or nil)
         end
       end
       if prefix ~= "" then
@@ -205,9 +209,17 @@ function M.parse_mappings(mappings, value, prefix)
         elseif k == "plugin" then
           mapping.group = true
           mapping.plugin = v
+        elseif k == "desc" then
+          mapping.opts.desc = v
         else
           error("Invalid key mapping: " .. vim.inspect(value))
         end
+      end
+      if not mapping.opts.desc then
+        mapping.opts.desc = not vim.tbl_contains(
+          { "", group_name .. " " },
+          (group_name .. " " .. (mapping.label and mapping.label or ""))
+        ) and group_name .. " " .. (mapping.label and mapping.label or "") or false
       end
       if mapping.cmd and type(mapping.cmd) == "function" then
         table.insert(M.functions, mapping.cmd)
@@ -260,7 +272,7 @@ function M.map(mode, prefix, cmd, buf, opts)
   if buf ~= nil then
     pcall(vim.api.nvim_buf_set_keymap, buf, mode, prefix, cmd, opts)
   else
-    vim.keymap.set( mode, prefix, cmd, opts)
+    vim.keymap.set(mode, prefix, cmd, opts)
   end
 end
 
@@ -294,6 +306,7 @@ function M.register(mappings, opts)
         noremap = mapping.opts.noremap,
         nowait = mapping.opts.nowait or false,
         expr = mapping.opts.expr or false,
+        desc = mapping.opts.desc or mapping.label,
       }
       if mapping.cmd:lower():sub(1, #"<plug>") == "<plug>" then
         keymap_opts.noremap = false
@@ -521,7 +534,7 @@ end
 ---@param mode string
 ---@param buf number
 function M.update_keymaps(mode, buf)
-  ---@type Keymap
+  ---@type Keymap[]
   local keymaps = buf and vim.api.nvim_buf_get_keymap(buf, mode) or vim.api.nvim_get_keymap(mode)
   local tree = M.get_tree(mode, buf).tree
   for _, keymap in pairs(keymaps) do
@@ -552,6 +565,7 @@ function M.update_keymaps(mode, buf)
         id = Util.t(keymap.lhs),
         prefix = keymap.lhs,
         cmd = keymap.rhs,
+        desc = keymap.desc,
         keys = Util.parse_keys(keymap.lhs),
       }
       -- don't include Plug keymaps
