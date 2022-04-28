@@ -1,5 +1,21 @@
 # 💥 Which Key
 
+## This is a maintained fork of the plugin
+### Differences
+* **Requires 0.7**
+* Uses `vim.keymap.set` -> You can also use functions etc.
+* Allows use of `desc` key so you get meaningful output with `nmap`:
+  ```lua
+    wk.register({
+      f = {
+        name = "find", -- optional group name
+        f = { "<cmd>Telescope find_files<cr>", "File", desc="Find File" },
+      },
+    }, { prefix = "<leader>" })
+  ```
+
+* Automatically generates descriptions with group names and labels: The `desc` for the above binding would be `find File`.
+
 **WhichKey** is a lua plugin for Neovim 0.5 that displays a popup with possible key bindings of
 the command you started typing. Heavily inspired by the original [emacs-which-key](https://github.com/justbur/emacs-which-key) and [vim-which-key](https://github.com/liuchengxu/vim-which-key).
 
