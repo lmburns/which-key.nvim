@@ -9,6 +9,7 @@ M.operators = {
   ["g~"] = "Toggle case",
   ["gu"] = "Lowercase",
   ["gU"] = "Uppercase",
+  ["gq"] = "Format",
   [">"] = "Indent right",
   ["<lt>"] = "Indent left",
   ["zf"] = "Create fold",

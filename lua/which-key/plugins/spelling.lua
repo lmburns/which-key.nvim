@@ -6,6 +6,7 @@ M.actions = { { trigger = "z=", mode = "n" } }
 
 M.opts = {}
 
+---@diagnostic disable-next-line:unused-local
 function M.setup(_wk, config, options)
   table.insert(options.triggers_nowait, "z=")
   M.opts = config
@@ -13,6 +14,7 @@ end
 
 ---@type Plugin
 ---@return PluginItem[]
+---@diagnostic disable-next-line:unused-local
 function M.run(_trigger, _mode, _buf)
   -- if started with a count, let the default keybinding work
   local count = vim.api.nvim_get_vvar("count")

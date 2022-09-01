@@ -20,6 +20,8 @@ function M.is_empty(tab)
   return M.count(tab) == 0
 end
 
+---@param str string
+---@return string?
 function M.t(str)
   if type(str) ~= "string" then
     return

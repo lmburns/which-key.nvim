@@ -86,7 +86,7 @@ function M.get_mappings(mode, prefix_i, buf)
   ---@field mode string
   ---@field prefix_i string
   ---@field buf number
-  ---@field mapping Mapping
+  ---@field mapping Mapping?
   ---@field mappings VisualMapping[]
   local ret
   ret = { mapping = nil, mappings = {}, mode = mode, buf = buf, prefix_i = prefix_i }
@@ -266,7 +266,7 @@ function M.map(mode, prefix_n, cmd, buf, opts)
   local other = vim.api.nvim_buf_call(buf or 0, function()
     local ret = vim.fn.maparg(prefix_n, mode, false, true)
     ---@diagnostic disable-next-line: undefined-field
-    return (ret and ret.lhs and ret.rhs ~= cmd) and ret or nil
+    return (ret and ret.lhs and ret.rhs and ret.rhs ~= cmd) and ret or nil
   end)
   if other then
     table.insert(M.duplicates, { mode = mode, prefix = prefix_n, cmd = cmd, buf = buf, other = other })

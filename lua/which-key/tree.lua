@@ -22,16 +22,16 @@ end
 
 ---@param prefix_i string
 ---@param index number defaults to last. If < 0, then offset from last
----@return Node
+---@return Node?
 function Tree:get(prefix_i, index, plugin_context)
-  prefix_i = Util.parse_internal(prefix_i)
+  local prefix_i_tbl = Util.parse_internal(prefix_i)
   local node = self.root
-  index = index or #prefix_i
+  index = index or #prefix_i_tbl
   if index < 0 then
-    index = #prefix_i + index
+    index = #prefix_i_tbl + index
   end
   for i = 1, index, 1 do
-    node = node.children[prefix_i[i]]
+    node = node.children[prefix_i_tbl[i]]
     if node and plugin_context and node.mapping and node.mapping.plugin then
       local children = require("which-key.plugins").invoke(node.mapping, plugin_context)
       node.children = {}
@@ -50,11 +50,11 @@ end
 ---@param prefix_i string
 ---@return Node[]
 function Tree:path(prefix_i)
-  prefix_i = Util.parse_internal(prefix_i)
+  local prefix_i_tbl = Util.parse_internal(prefix_i)
   local node = self.root
   local path = {}
-  for i = 1, #prefix_i, 1 do
-    node = node.children[prefix_i[i]]
+  for i = 1, #prefix_i_tbl, 1 do
+    node = node.children[prefix_i_tbl[i]]
     table.insert(path, node)
     if not node then
       break

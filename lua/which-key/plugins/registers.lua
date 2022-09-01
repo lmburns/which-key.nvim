@@ -9,6 +9,7 @@ M.actions = {
   { trigger = "<c-r>", mode = "c" },
 }
 
+---@diagnostic disable-next-line:unused-local
 function M.setup(_wk, _config, options)
   for _, action in ipairs(M.actions) do
     if not action.delay then
@@ -36,6 +37,7 @@ local labels = {
 
 ---@type Plugin
 ---@return PluginItem[]
+---@diagnostic disable-next-line:unused-local
 function M.run(_trigger, _mode, _buf)
   local items = {}
 

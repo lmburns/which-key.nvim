@@ -1,5 +1,7 @@
 local Keys = require("which-key.keys")
 local Util = require("which-key.util")
+
+---@diagnostic disable-next-line:unused-local
 local blocked = false
 
 ---@class WhichKey

@@ -9,6 +9,7 @@ M.actions = {
   { trigger = "g'", mode = "n" },
 }
 
+---@diagnostic disable-next-line:unused-local
 function M.setup(_wk, _config, options)
   for _, action in ipairs(M.actions) do
     table.insert(options.triggers_nowait, action.trigger)
@@ -30,6 +31,7 @@ local labels = {
 
 ---@type Plugin
 ---@return PluginItem[]
+---@diagnostic disable-next-line:unused-local
 function M.run(_trigger, _mode, buf)
   local items = {}
 

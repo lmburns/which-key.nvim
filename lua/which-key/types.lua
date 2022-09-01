@@ -27,6 +27,7 @@ local KeyCodes
 ---@field silent boolean
 ---@field nowait boolean
 ---@field expr boolean
+---@field desc string|boolean
 local MappingOptions
 
 ---@class Mapping
@@ -63,9 +64,15 @@ local VisualMapping
 ---@field highlights table
 local PluginItem
 
+---@class PluginAction
+---@field trigger string
+---@field mode string
+---@field label string
+local PluginAction
+
 ---@class Plugin
 ---@field name string
----@field actions string[] | string[][]
+---@field actions PluginAction[]
 ---@field run fun(trigger:string, mode:string, buf:number):PluginItem[]
 ---@field setup fun()
 local Plugin
